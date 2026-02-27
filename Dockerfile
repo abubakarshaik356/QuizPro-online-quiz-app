@@ -1,10 +1,16 @@
-FROM tomcat:9.0-jdk17
+# Step 1: Build the WAR using Maven
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# Remove default apps
+WORKDIR /app
+COPY . .
+RUN mvn clean package
+
+# Step 2: Deploy WAR to Tomcat
+FROM tomcat:10.1-jdk17
+
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Copy WAR file into Tomcat
-COPY target/QuizPro.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=build /app/target/Quiz-Pro.war /usr/local/tomcat/webapps/ROOT.war
 
 EXPOSE 8080
 
