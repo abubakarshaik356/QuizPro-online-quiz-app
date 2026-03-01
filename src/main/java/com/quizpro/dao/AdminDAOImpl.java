@@ -511,7 +511,13 @@ public class AdminDAOImpl implements AdminDAO {
 			ResultSet rSet=ps.executeQuery();
 			if(rSet.next()) {
 				if(rSet.getDouble(1)>perc) {
-					EmailUtil.sendCompleteMail(email);
+					new Thread(() -> {
+					    try {
+					        EmailUtil.sendCompleteMail(email);
+					    } catch (Exception e) {
+					        e.printStackTrace();
+					    }
+					}).start();
 					return true;
 				} else {
 					String uqry="UPDATE result SET percentage=?, resstatus=?, date=? where userId=? and quizId=?";
@@ -528,7 +534,13 @@ public class AdminDAOImpl implements AdminDAO {
 					ps.setInt(4, userId);
 					ps.setInt(5, quizId);
 					ps.executeUpdate();
-					EmailUtil.sendCompleteMail(email);
+					new Thread(() -> {
+					    try {
+					        EmailUtil.sendCompleteMail(email);
+					    } catch (Exception e) {
+					        e.printStackTrace();
+					    }
+					}).start();
 					return true;
 				}
 			}
@@ -549,7 +561,13 @@ public class AdminDAOImpl implements AdminDAO {
 				String resId="QPRO"+id;
 				pStatement.setString(6, resId);
 				pStatement.executeUpdate();
-				EmailUtil.sendCompleteMail(email);
+				new Thread(() -> {
+				    try {
+				        EmailUtil.sendCompleteMail(email);
+				    } catch (Exception e) {
+				        e.printStackTrace();
+				    }
+				}).start();
 				return true;
 			}
 		} catch (SQLException e) {

@@ -23,7 +23,13 @@ public class SendCertificateEmailServlet extends HttpServlet {
 		String quizTitle=req.getParameter("title");
 		String date=req.getParameter("date");
 		String certId=req.getParameter("id");
-		EmailUtil.sendCertificateMail(userEmail, userName, quizTitle, certId, date);
+		new Thread(() -> {
+		    try {
+		        EmailUtil.sendCertificateMail(userEmail, userName, quizTitle, certId, date);
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    }
+		}).start();
 		resp.sendRedirect(req.getHeader("referer"));
 	}
 }

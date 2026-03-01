@@ -24,7 +24,13 @@ public class ResendOtpServlet extends HttpServlet {
         session.setAttribute("otp", otp);
         session.setAttribute("otp_time", System.currentTimeMillis());
 
-        EmailUtil.sendOtp(email, otp);
+        new Thread(() -> {
+            try {
+                EmailUtil.sendOtp(email, otp);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
 
         resp.sendRedirect("verifyOtp.jsp?msg=OTP Resent");
     }

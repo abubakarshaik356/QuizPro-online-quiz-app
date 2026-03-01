@@ -31,7 +31,13 @@ public class CreateUserServlet extends HttpServlet {
 		if(result) {
 			String targetPage = "UserManagement";
 			String successMessage = "New user successfully created!";
-			EmailUtil.sendCreateMail(email, name, password);
+			new Thread(() -> {
+			    try {
+			        EmailUtil.sendCreateMail(email, name, password);
+			    } catch (Exception e) {
+			        e.printStackTrace();
+			    }
+			}).start();
 			String encodedMessage = java.net.URLEncoder.encode(successMessage, "UTF-8");
 			resp.sendRedirect(targetPage + "?status=success&message=" + encodedMessage);
 		}
