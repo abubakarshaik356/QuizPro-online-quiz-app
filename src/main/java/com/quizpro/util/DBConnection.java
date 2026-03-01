@@ -8,9 +8,11 @@ public class DBConnection {
 	public static Connection getConnector() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/onlinequiz","root","root");
-//			Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/onlinequiz","root","tiger");
-//			Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/onlinequiz","root","Narendra@2002");
+			Connection con = DriverManager.getConnection(
+				    "jdbc:mysql://gondola.proxy.rlwy.net:14203/quizpro?useSSL=false&allowPublicKeyRetrieval=true",
+				    "root",
+				    "EFdjoJKGcwSBVYCZHRNJKROcAwDKIWmW"
+				);
 			return con;
 		} catch (SQLException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block

@@ -169,8 +169,5 @@ window.onclick = function(event) {
 
     </div>
 </header>
-<script>
-	<%@include file="chatbot.js" %>
-	</script>
 </body>
 </html>
