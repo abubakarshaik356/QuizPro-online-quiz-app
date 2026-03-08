@@ -331,12 +331,32 @@ h3 {
 	}
 	.action-banner .cta-button {
 		margin-top: 20px;
-		width: 100%;
+		width: 85%;
 		text-align: center;
 	}
 	.category-grid {
 		grid-template-columns: repeat(2, 1fr);
 	}
+}
+
+@media (max-width:600px){
+
+.test-item{
+flex-direction:column;
+align-items:flex-start;
+gap:5px;
+}
+
+.test-item span{
+font-size:14px;
+}
+
+.section{
+margin: 10px;
+}
+
+
+
 }
 
 .path-grid {
@@ -453,6 +473,29 @@ h3 {
 	text-decoration: none;
 }
 
+@media (max-width:768px){
+
+.action-banner{
+flex-direction:column;
+align-items:flex-start;
+gap:15px;
+padding:25px;
+margin:10px;
+}
+
+.action-banner h1{
+font-size:1.6em;
+}
+
+.action-banner a{
+margin-right:20px;
+}
+.view-all .cta-button{
+width:800%;
+text-align:center;
+}
+
+}
 /* --- Support Banner Styling (Merged Contact Section) --- */
 </style>
 </head>

@@ -188,7 +188,8 @@ h1 {
 }
 
 .history-table th, .history-table td {
-	padding: 14px;
+	padding:12px;
+	white-space:nowrap;
 	border-bottom: 1px solid #E9ECEF;
 }
 
@@ -272,9 +273,15 @@ h1 {
 		flex-direction: column;
 	}
 	.history-table th, .history-table td {
-		padding: 10px 5px;
-		font-size: 0.9em;
+		font-size:13px;
+padding:10px;
 	}
+	.retake-button,
+.download-button{
+display:block;
+margin-top:6px;
+text-align:center;
+}
 }
 </style>
 </head>

@@ -434,10 +434,72 @@ body {
     font-size: 14px;
     white-space: pre;
 }
+#deviceBlock{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#111;
+color:white;
+z-index:9999;
 
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:20px;
+font-family:Arial;
+}
+
+#deviceBlock h2{
+font-size:28px;
+margin-bottom:10px;
+}
+
+#deviceBlock p{
+font-size:18px;
+margin:6px 0;
+}
+
+#deviceBlock button{
+margin-top:20px;
+padding:12px 25px;
+font-size:16px;
+border:none;
+background:#ff4444;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
 </style>
 </head>
 <body>
+<div id="deviceBlock">
+
+<h2>⚠ Test Not Available on Mobile</h2>
+
+<p>This test can only be taken on a Desktop or Laptop.</p>
+
+<p>Please switch to a larger screen device.</p>
+
+<p>Redirecting to dashboard in <span id="timer">10</span> seconds...</p>
+
+<button onclick="window.location.href='dashboard.jsp'">
+Go to Dashboard
+</button>
+
+</div>
+<%
+Integer userId = (Integer) session.getAttribute("id");
+String name = (String) session.getAttribute("name");
+
+if(userId == null || name == null){
+    response.sendRedirect("login.jsp");
+    return;
+}
+%>
 	<%
 	int quizId = (int) request.getAttribute("quizId");
 	String quizName = (String) request.getAttribute("quizName");
@@ -816,7 +878,49 @@ document.addEventListener("visibilitychange", function () {
 
 
 </script>
+<script>
 
+	function checkDevice(){
+
+		let width = window.innerWidth;
+
+		let mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+		if(width <= 1024 || mobile){
+
+		document.getElementById("deviceBlock").style.display="flex";
+
+		startTimer();
+
+		}
+
+		}
+
+let timeLeft = 10;
+
+function startTimer(){
+
+let timer=setInterval(function(){
+
+document.getElementById("timer").innerHTML=timeLeft;
+
+timeLeft--;
+
+if(timeLeft < 0){
+
+clearInterval(timer);
+
+window.location.href="dashboard.jsp";
+
+}
+
+},1000);
+
+}
+
+window.onload = checkDevice;
+
+</script>
 
 </body>
 </html>

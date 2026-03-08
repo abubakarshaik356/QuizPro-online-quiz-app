@@ -176,10 +176,71 @@
                 width: 100%;
             }
         }
+        #deviceBlock{
+display:none;   /* keep hidden by default */
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#111;
+color:white;
+z-index:9999;
+
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:20px;
+}
+
+#deviceBlock h2{
+font-size:28px;
+margin-bottom:10px;
+}
+
+#deviceBlock p{
+font-size:18px;
+margin:6px 0;
+}
+
+#deviceBlock button{
+margin-top:20px;
+padding:12px 25px;
+font-size:16px;
+border:none;
+background:#ff4444;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
     </style>
 </head>
 <body>
+<%
+Integer userId = (Integer) session.getAttribute("id");
+String name = (String) session.getAttribute("name");
 
+if(userId == null || name == null){
+    response.sendRedirect("login.jsp");
+    return;
+}
+%>
+	<div id="deviceBlock">
+
+<h2>⚠ Test Not Available on Mobile</h2>
+
+<p>This test can only be taken on a Desktop or Laptop.</p>
+
+<p>Please switch to a larger screen device.</p>
+
+<p>Redirecting to dashboard in <span id="timer">10</span> seconds...</p>
+
+<button onclick="window.location.href='dashboard.jsp'">
+Go to Dashboard
+</button>
+
+</div>
     <header class="overview-header">
         <h1>Test Setup: <%=quiz.getTitle() %></h1>
         <p>Review the details and rules before beginning the assessment.</p>
@@ -240,7 +301,47 @@
         </div>
         
     </div>
-	
+	<script>
+
+function checkDevice(){
+
+let width = window.innerWidth;
+
+if(width <= 1024){
+
+document.getElementById("deviceBlock").style.display="flex";
+
+startTimer();
+
+}
+
+}
+
+let timeLeft = 10;
+
+function startTimer(){
+
+let timer=setInterval(function(){
+
+document.getElementById("timer").innerHTML=timeLeft;
+
+timeLeft--;
+
+if(timeLeft < 0){
+
+clearInterval(timer);
+
+window.location.href="dashboard.jsp";
+
+}
+
+},1000);
+
+}
+
+window.onload = checkDevice;
+
+</script>
 	
 </body>
 </html>

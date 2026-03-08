@@ -448,6 +448,119 @@ h2 {
 		margin-top: 40px;
 	}
 }
+
+.menu-toggle{
+    display:none;
+    font-size:22px;
+    cursor:pointer;
+}
+
+@media (max-width:768px){
+
+    .menu-toggle{
+        display:block;
+    }
+
+    .nav{
+        display:none;
+        position:absolute;
+        top:70px;
+        right:0;
+        background:white;
+        width:100%;
+        flex-direction:column;
+        text-align:center;
+        box-shadow:0 5px 10px rgba(0,0,0,0.1);
+    }
+
+    .nav a{
+        display:block;
+        margin:15px 0;
+    }
+
+}
+@media (max-width:768px){
+
+.hero{
+    padding:60px 20px;
+}
+
+.hero h1{
+    font-size:2em;
+}
+
+.hero p{
+    font-size:1.1em;
+}
+
+.cta-button{
+    padding:12px 20px;
+    font-size:1em;
+}
+
+}
+@media (max-width:768px){
+
+.props-grid{
+    grid-template-columns:1fr;
+}
+
+.category-grid{
+    grid-template-columns:repeat(2,1fr);
+}
+
+.card{
+    padding:20px 10px;
+}
+
+}
+@media (max-width:480px){
+
+.category-grid{
+    grid-template-columns:1fr;
+}
+
+}
+@media (max-width:768px){
+
+.certificate-content-grid{
+    grid-template-columns:1fr;
+    text-align:center;
+}
+
+.certificate-info{
+    order:2;
+}
+
+.certificate-mockup{
+    order:1;
+    transform:none;
+}
+
+}
+@media (max-width:768px){
+
+.section{
+    padding:50px 20px;
+}
+
+}
+img{
+    max-width:100%;
+    height:auto;
+}
+@media (max-width:768px){
+
+.footer p{
+    font-size:0.8em;
+}
+
+.footer a{
+    display:inline-block;
+    margin:5px;
+}
+
+}
 </style>
 </head>
 
@@ -463,7 +576,9 @@ h2 {
 					style="padding: 10px 20px; margin-left: 25px; font-size: 1em;">Get
 					Started</a>
 			</nav>
+			<i class="fas fa-bars menu-toggle" onclick="toggleMenu()"></i>
 		</div>
+		
 	</header>
 
 	<section class="hero section">
@@ -597,7 +712,17 @@ h2 {
 			</p>
 		</div>
 	</footer>
+	<script>
+function toggleMenu(){
+    var nav = document.querySelector(".nav");
 
+    if(nav.style.display === "block"){
+        nav.style.display = "none";
+    }else{
+        nav.style.display = "block";
+    }
+}
+</script>
 </body>
 
 </html>
