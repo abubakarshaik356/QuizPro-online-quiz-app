@@ -44,7 +44,7 @@ public class CreateUserServlet extends HttpServlet {
             } 
             catch (Exception e) {
                 e.printStackTrace();
-                // email failed but user creation succeeded
+                resp.sendRedirect(targetPage + "?status=success&message=" + encodedMessage);
             }
 
             resp.sendRedirect(targetPage + "?status=success&message=" + encodedMessage);
