@@ -1,12 +1,18 @@
 package com.quizpro.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Base64;
 import java.io.OutputStream;
 import java.util.Properties;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+
+import com.sendgrid.*;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.*;
 
 public class EmailUtil {
 
@@ -14,124 +20,199 @@ public class EmailUtil {
 	private static final String APP_PASSWORD = "pien sjzi ksxh xepi";
 
 	public static void sendOtp(String to, int otp) {
-		String subject = "Your OTP Code";
-		String html = getOtpTemplate(otp);
-		sendMail(to, subject, html);
+		Personalization personalization = new Personalization();
+        personalization.addDynamicTemplateData("otp", otp);
+
+        sendMail(to, OTP_TEMPLATE, personalization);
 	}
 
 	public static void sendSuccessMail(String to) {
-		String subject = "Registration Successful";
-		String html = getSuccessTemplate();
-		sendMail(to, subject, html);
+		Personalization personalization = new Personalization();
+
+        sendMail(to, REGISTRATION_TEMPLATE, personalization);
 	}
 
-	public static void sendCreateMail(String to, String name, String password) {
-		String subject = "Account Creation Successful";
-		String html = getCreationMail(name, to, password);
-		sendMail(to, subject, html);
-	}
+	private static final String API_KEY = System.getenv("SENDGRID_API_KEY");
+
+    // Replace with your SendGrid template IDs
+    private static final String OTP_TEMPLATE = "d-396181ca3acb46f8b8a22730800a4f1c";
+    private static final String REGISTRATION_TEMPLATE = "d-95252136b537469e908c7738bb6fcdad";
+    private static final String TEST_COMPLETE_TEMPLATE = "d-2149facd7d3946beb7a88c149d8326f2";
+    
+    private static void sendMail(String toEmail, String templateId, Personalization personalization) {
+
+        try {
+
+            Email from = new Email(FROM_EMAIL);
+            Email to = new Email(toEmail);
+
+            Mail mail = new Mail();
+            mail.setFrom(from);
+            mail.setTemplateId(templateId);
+
+            personalization.addTo(to);
+            mail.addPersonalization(personalization);
+
+            SendGrid sg = new SendGrid(API_KEY);
+
+            Request request = new Request();
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+
+            Response response = sg.api(request);
+
+            System.out.println("Email Status: " + response.getStatusCode());
+            System.out.println("Response Body: " + response.getBody());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+	public static void sendCreateMail(String email,String name,String password) {
+
+        try {
+
+            Email from = new Email("quizpro.org@gmail.com");
+            Email to = new Email(email);
+
+            Mail mail = new Mail();
+            mail.setFrom(from);
+
+            mail.setTemplateId("d-53d70c2226d3409db2fda857c8c7ae6e");
+
+            Personalization personalization = new Personalization();
+            personalization.addTo(to);
+
+            personalization.addDynamicTemplateData("name", name);
+            personalization.addDynamicTemplateData("email", email);
+            personalization.addDynamicTemplateData("password", password);
+
+            mail.addPersonalization(personalization);
+
+            SendGrid sg = new SendGrid(API_KEY);
+
+            Request request = new Request();
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+
+            Response response = sg.api(request);
+
+            System.out.println("Email Status: " + response.getStatusCode());
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
 
 	public static void sendCompleteMail(String to) {
-		String subject = "Test Completed Successfully";
-		String html = getTestCompleteTemplate();
-		sendMail(to, subject, html);
+		Personalization personalization = new Personalization();
+
+        sendMail(to, TEST_COMPLETE_TEMPLATE, personalization);
 	}
 
-	public static void sendMail(String to, String subject, String htmlContent) {
-		Properties props = new Properties();
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.starttls.enable", "true");
-		props.put("mail.smtp.host", "smtp.gmail.com");
-		props.put("mail.smtp.port", "587");
-		props.put("mail.smtp.ssl.protocols", "TLSv1.2");
-
-		Session session = Session.getInstance(props, new Authenticator() {
-			@Override
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(FROM_EMAIL, APP_PASSWORD);
-			}
-		});
-
-		try {
-			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress(FROM_EMAIL));
-			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-			message.setSubject(subject);
-			message.setContent(htmlContent, "text/html; charset=utf-8");
-			Transport.send(message);
-			System.out.println("HTML Mail Sent Successfully!");
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void sendMail(String to, String subject, String htmlContent) {
+//		Properties props = new Properties();
+//		props.put("mail.smtp.auth", "true");
+//		props.put("mail.smtp.starttls.enable", "true");
+//		props.put("mail.smtp.host", "smtp.gmail.com");
+//		props.put("mail.smtp.port", "587");
+//		props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+//
+//		Session session = Session.getInstance(props, new Authenticator() {
+//			@Override
+//			protected PasswordAuthentication getPasswordAuthentication() {
+//				return new PasswordAuthentication(FROM_EMAIL, APP_PASSWORD);
+//			}
+//		});
+//
+//		try {
+//			Message message = new MimeMessage(session);
+//			message.setFrom(new InternetAddress(FROM_EMAIL));
+//			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+//			message.setSubject(subject);
+//			message.setContent(htmlContent, "text/html; charset=utf-8");
+//			Transport.send(message);
+//			System.out.println("HTML Mail Sent Successfully!");
+//		} catch (MessagingException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public static void sendCertificateMail(String to, String userName, String quizName, String certificateId,
 			String date) {
-		try {
-			// 1. Generate certificate HTML
-			String html = getCertificateHtml(userName, quizName, date, certificateId);
+		 try {
 
-			// 2. Convert HTML to PDF
-			File pdf = generateCertificatePdf(html, "QuizPro-Certificate.pdf");
+		        // 1. Generate certificate HTML
+		        String html = getCertificateHtml(userName, quizName, date, certificateId);
 
-			// 3. Send mail with attachment
-			sendMailWithAttachment(to, "🎓 Your QuizPro Certificate",
-					"Congratulations! Your certificate is attached with this email.", pdf);
+		        // 2. Convert HTML to PDF
+		        File pdf = generateCertificatePdf(html, "QuizPro-Certificate.pdf");
 
-			// 4. Cleanup
-			pdf.delete();
+		        // 3. Send email using SendGrid
+		        sendMailWithAttachment(to,
+		                "🎓 Your QuizPro Certificate",
+		                getCertificateMailBody(),
+		                pdf);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		        // 4. Delete temporary PDF
+		        pdf.delete();
+
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    }
 	}
 
 	private static void sendMailWithAttachment(String to, String subject, String messageText, File attachment)
 			throws Exception {
 
-		Properties props = new Properties();
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.starttls.enable", "true");
-		props.put("mail.smtp.host", "smtp.gmail.com");
-		props.put("mail.smtp.port", "587");
+		Email from = new Email(FROM_EMAIL);
+	    Email toEmail = new Email(to);
 
-		Session session = Session.getInstance(props, new Authenticator() {
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(FROM_EMAIL, APP_PASSWORD);
-			}
-		});
+	    Mail mail = new Mail();
+	    mail.setFrom(from);
+	    mail.setSubject(subject);
 
-		Message message = new MimeMessage(session);
-		message.setFrom(new InternetAddress(FROM_EMAIL));
-		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-		message.setSubject(subject);
+	    Personalization personalization = new Personalization();
+	    personalization.addTo(toEmail);
 
-		// Text body
-		MimeBodyPart textPart = new MimeBodyPart();
-		textPart.setText(messageText);
+	    mail.addPersonalization(personalization);
 
-		MimeBodyPart htmlPart = new MimeBodyPart();
-		htmlPart.setContent(getCertificateMailBody(), "text/html; charset=UTF-8");
+	    Content content = new Content("text/html", getCertificateMailBody());
+	    mail.addContent(content);
 
-		// Attachment
-		MimeBodyPart attachmentPart = new MimeBodyPart();
-		attachmentPart.attachFile(attachment);
+	    // ---------- Convert PDF to Base64 ----------
+	    FileInputStream fis = new FileInputStream(attachment);
+	    byte[] data = fis.readAllBytes();
+	    fis.close();
 
-		Multipart multipart = new MimeMultipart("mixed");
+	    String encodedFile = Base64.getEncoder().encodeToString(data);
 
-		Multipart bodyMultipart = new MimeMultipart("alternative");
-		bodyMultipart.addBodyPart(textPart);
-		bodyMultipart.addBodyPart(htmlPart);
+	    Attachments attachments = new Attachments();
+	    attachments.setContent(encodedFile);
+	    attachments.setType("application/pdf");
+	    attachments.setFilename("QuizPro-Certificate.pdf");
+	    attachments.setDisposition("attachment");
 
-		MimeBodyPart bodyWrapper = new MimeBodyPart();
-		bodyWrapper.setContent(bodyMultipart);
+	    mail.addAttachments(attachments);
 
-		multipart.addBodyPart(bodyWrapper);
-		multipart.addBodyPart(attachmentPart);
+	    // ---------- Send Email ----------
+	    SendGrid sg = new SendGrid(API_KEY);
 
-		message.setContent(multipart);
-		System.out.println("Email sent successfully");
-		Transport.send(message);
+	    Request request = new Request();
+	    request.setMethod(Method.POST);
+	    request.setEndpoint("mail/send");
+	    request.setBody(mail.build());
+
+	    Response response = sg.api(request);
+
+	    System.out.println("Email Status: " + response.getStatusCode());
+	    System.out.println("Response Body: " + response.getBody());
 	}
 
 	private static String getCertificateMailBody() {
